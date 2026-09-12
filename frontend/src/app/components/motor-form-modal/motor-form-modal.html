@@ -24,7 +24,7 @@
         </div>
 
         <div class="form-group">
-          <label for="modelo">Modelo / Descrição *</label>
+          <label for="modelo">Modelo *</label>
           <input id="modelo" type="text" formControlName="modelo" placeholder="Ex: Motor Triphasic W22" />
           @if (motorForm.get('modelo')?.touched && motorForm.get('modelo')?.invalid) {
             <small class="error-msg">Modelo é obrigatório.</small>
@@ -84,7 +84,7 @@
       <div class="modal-actions">
         <button type="button" class="btn-cancel" (click)="fecharModal()">Cancelar</button>
         <button type="submit" class="btn-submit" [disabled]="salvando">
-          {{ salvando ? 'Salvando...' : 'Cadastrar Motor' }}
+          {{ salvando ? 'Salvando...' : 'Confirmar' }}
         </button>
       </div>
 

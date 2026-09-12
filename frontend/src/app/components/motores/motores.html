@@ -1,19 +1,26 @@
 <div class="motores-container">
   
-  <!-- BARRA DE AÇÕES -->
   <div class="actions-bar">
     <h2>Lista de Motores Cadastrados</h2>
+    
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar por código ou modelo..." 
+        [(ngModel)]="termoBusca"
+        (input)="buscarMotores()" />
+    </div>
+
     <div class="button-group">
       <button type="button" class="btn-refresh" (click)="carregarMotores()">
         Listar / Atualizar
       </button>
-      <button type="button" class="btn-create" (click)="abrirModal()">
+      <button type="button" class="btn-create" (click)="abrirModalParaCriar()">
         + Criar Motor
       </button>
     </div>
   </div>
 
-  <!-- TABELA DE MOTORES -->
   @if (carregando) {
     <div class="loading">Carregando motores do banco de dados...</div>
   } @else {
@@ -56,8 +63,8 @@
                 <td>{{ motor.preco ? 'R$ ' + motor.preco : '-' }}</td>
                 <td>{{ motor.criado_em }}</td>
                 <td class="actions-cell">
-                  <button class="btn-edit-sm">Editar</button>
-                  <button class="btn-delete-sm">Excluir</button>
+                  <button class="btn-edit-sm" (click)="abrirModalParaEditar(motor)">Editar</button>
+                  <button class="btn-delete-sm" (click)="excluirMotor(motor.id!)">Excluir</button>
                 </td>
               </tr>
             }
@@ -66,15 +73,15 @@
       </div>
     } @else {
       <div class="empty-state">
-        <p>Nenhum motor cadastrado no banco de dados.</p>
+        <p>Nenhum motor encontrado.</p>
       </div>
     }
 
   }
 
-  <!-- MODAL DE CADASTRO -->
   @if (exibirModal) {
     <app-motor-form-modal 
+      [motorParaEditar]="motorSelecionado"
       (aoFechar)="fecharModal()" 
       (aoSalvarSucesso)="onMotorSalvo()">
     </app-motor-form-modal>

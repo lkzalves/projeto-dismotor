@@ -9,15 +9,25 @@ import { environment } from '../../environments/environment';
 })
 export class MotorService {
   private http = inject(HttpClient);
-  private readonly apiUrl = environment.apiUrl;
+  private readonly apiUrl = `${environment.apiUrl}/motores`;
 
-  getMotores(): Observable<MotorInterface[]> {
-    return this.http.get<MotorInterface[]>(this.apiUrl);
+  getMotores(search?: string): Observable<MotorInterface[]> {
+    let params = new HttpParams();
+    if (search && search.trim() !== '') {
+      params = params.set('search', search.trim());
+    }
+    return this.http.get<MotorInterface[]>(this.apiUrl, { params });
   }
+
   createMotor(motor: MotorInterface): Observable<MotorInterface> {
     return this.http.post<MotorInterface>(this.apiUrl, motor);
   }
+
   updateMotor(id: number, motor: MotorInterface): Observable<MotorInterface> {
     return this.http.put<MotorInterface>(`${this.apiUrl}/${id}`, motor);
+  }
+
+  deleteMotor(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

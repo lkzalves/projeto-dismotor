@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MotorService } from '../../services/motor';
 import { MotorInterface } from '../../interfaces/motor-interface';
@@ -10,9 +10,12 @@ import { MotorInterface } from '../../interfaces/motor-interface';
   templateUrl: './motor-form-modal.html',
   styleUrl: './motor-form-modal.css',
 })
-export class MotorFormModal {
+export class MotorFormModal implements OnInit {
   private fb = inject(FormBuilder);
   private motorService = inject(MotorService);
+
+  // Recebe o motor se for Edição. Se for criação, vem null ou undefined.
+  @Input() motorParaEditar: MotorInterface | null = null;
 
   @Output() aoFechar = new EventEmitter<void>();
   @Output() aoSalvarSucesso = new EventEmitter<void>();
@@ -20,20 +23,27 @@ export class MotorFormModal {
   salvando: boolean = false;
   mensagemErro: string = '';
 
-  // Cnstrução do Formulário
+  // Construção do Formulário alinhado às regras do contrato do teste
   motorForm: FormGroup = this.fb.group({
-    codigo: ['', [Validators.required, Validators.maxLength(20)]],
-    modelo: ['', [Validators.required, Validators.maxLength(100)]],
-    potencia_cv: [null, [Validators.required, Validators.min(0.1)]],
+    codigo: ['', [Validators.required, Validators.maxLength(30)]],
+    modelo: ['', [Validators.required, Validators.maxLength(80)]],
+    fabricante_id: [null, [Validators.required]],
+    potencia_cv: [null, [Validators.required, Validators.min(0.01)]],
     tensao: ['', [Validators.required]],
+    frequencia_hz: [60, [Validators.required, Validators.pattern(/^(50|60)$/)]],
+    polos: [4, [Validators.required, Validators.pattern(/^(2|4|6|8)$/)]],
     rotacao_rpm: [null, [Validators.required, Validators.min(1)]],
-    preco: [null, [Validators.min(0)]],
-    fabricante_id: [''],
     carcaca: [''],
     grau_protecao: [''],
-    frequencia_hz: [null, [Validators.min(1)]],
-    polos: [null, [Validators.min(1)]],
+    preco: [null, [Validators.min(0)]],
   });
+
+  ngOnInit(): void {
+    // Se recebeu um motor para edição, preenche o formulário automaticamente
+    if (this.motorParaEditar) {
+      this.motorForm.patchValue(this.motorParaEditar);
+    }
+  }
 
   fecharModal(): void {
     this.aoFechar.emit();
@@ -48,21 +58,36 @@ export class MotorFormModal {
     this.salvando = true;
     this.mensagemErro = '';
 
-    const novoMotor: MotorInterface = this.motorForm.value;
+    const dadosMotor: MotorInterface = this.motorForm.value;
 
-    this.motorService.createMotor(novoMotor).subscribe({
-      next: () => {
-        this.salvando = false;
-        this.aoSalvarSucesso.emit();
-      },
-      error: (err) => {
-        this.salvando = false;
-        if (err.error && err.error.error) {
-          this.mensagemErro = err.error.error;
-        } else {
-          this.mensagemErro = 'Ocorreu um erro ao salvar o motor. Tente novamente.';
-        }
-      },
-    });
+    // Se temos motorParaEditar com ID -> Executa PUT. Caso contrário -> Executa POST.
+    if (this.motorParaEditar && this.motorParaEditar.id) {
+      this.motorService.updateMotor(this.motorParaEditar.id, dadosMotor).subscribe({
+        next: () => {
+          this.salvando = false;
+          this.aoSalvarSucesso.emit();
+        },
+        error: (err) => this.tratarErro(err),
+      });
+    } else {
+      this.motorService.createMotor(dadosMotor).subscribe({
+        next: () => {
+          this.salvando = false;
+          this.aoSalvarSucesso.emit();
+        },
+        error: (err) => this.tratarErro(err),
+      });
+    }
+  }
+
+  private tratarErro(err: any): void {
+    this.salvando = false;
+    if (err.error && err.error.error) {
+      // Se a API retornar a estrutura { error: "...", details: [...] }
+      const detalhes = err.error.details ? `: ${err.error.details.join(', ')}` : '';
+      this.mensagemErro = `${err.error.error}${detalhes}`;
+    } else {
+      this.mensagemErro = 'Ocorreu um erro ao salvar o motor. Tente novamente.';
+    }
   }
 }
