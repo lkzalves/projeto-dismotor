@@ -1,0 +1,94 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <h3>Cadastrar Novo Motor</h3>
+      <button type="button" class="btn-close" (click)="fecharModal()">×</button>
+    </div>
+
+    @if (mensagemErro) {
+      <div class="alert-error">
+        {{ mensagemErro }}
+      </div>
+    }
+
+    <form [formGroup]="motorForm" (ngSubmit)="salvarMotor()">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="codigo">Código *</label>
+          <input id="codigo" type="text" formControlName="codigo" placeholder="Ex: MOT-100" />
+          @if (motorForm.get('codigo')?.touched && motorForm.get('codigo')?.invalid) {
+            <small class="error-msg">Código é obrigatório.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="modelo">Modelo / Descrição *</label>
+          <input id="modelo" type="text" formControlName="modelo" placeholder="Ex: Motor Triphasic W22" />
+          @if (motorForm.get('modelo')?.touched && motorForm.get('modelo')?.invalid) {
+            <small class="error-msg">Modelo é obrigatório.</small>
+          }
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="potencia_cv">Potência (CV) *</label>
+          <input id="potencia_cv" type="number" step="0.1" formControlName="potencia_cv" placeholder="Ex: 5.5" />
+        </div>
+
+        <div class="form-group">
+          <label for="tensao">Tensão (V) *</label>
+          <input id="tensao" type="text" formControlName="tensao" placeholder="Ex: 220/380V" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="rotacao_rpm">Rotação (RPM) *</label>
+          <input id="rotacao_rpm" type="number" formControlName="rotacao_rpm" placeholder="Ex: 1750" />
+        </div>
+
+        <div class="form-group">
+          <label for="preco">Preço (R$)</label>
+          <input id="preco" type="number" step="0.01" formControlName="preco" placeholder="Ex: 1500.00" />
+        </div>
+
+     <div class="form-group">
+          <label for="fabricante_id">Fabricante</label>
+          <input id="fabricante_id" type="text" formControlName="fabricante_id" placeholder="Ex: 1500.00" />
+        </div>
+
+        <div class="form-group">
+          <label for="carcaca">Carcaça</label>
+          <input id="carcaca" type="text" formControlName="carcaca" placeholder="Ex: 1500.00" />
+        </div>
+
+        <div class="form-group">
+          <label for="grau_protecao">Grau de Proteção</label>
+          <input id="grau_protecao" type="text" formControlName="grau_protecao" placeholder="Ex: 1500.00" />
+        </div>
+
+        <div class="form-group">
+          <label for="frequencia_hz">Frequência (Hz)</label>
+          <input id="frequencia_hz" type="number" formControlName="frequencia_hz" placeholder="Ex: 1500.00" />
+        </div>
+
+        <div class="form-group">
+          <label for="polos">Polos</label>
+          <input id="polos" type="number" formControlName="polos" placeholder="Ex: 1500.00" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="salvando">
+          {{ salvando ? 'Salvando...' : 'Cadastrar Motor' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="motores-container">
+  
+  <!-- BARRA DE AÇÕES -->
+  <div class="actions-bar">
+    <h2>Lista de Motores Cadastrados</h2>
+    <div class="button-group">
+      <button type="button" class="btn-refresh" (click)="carregarMotores()">
+        Listar / Atualizar
+      </button>
+      <button type="button" class="btn-create" (click)="abrirModal()">
+        + Criar Motor
+      </button>
+    </div>
+  </div>
+
+  <!-- TABELA DE MOTORES -->
+  @if (carregando) {
+    <div class="loading">Carregando motores do banco de dados...</div>
+  } @else {
+
+    @if (motores.length > 0) {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Código</th>
+              <th>Modelo</th>
+              <th>Fabricante</th>
+              <th>Potência (CV)</th>
+              <th>Tensão (V)</th>
+              <th>Frequência (Hz)</th>
+              <th>Polos</th>
+              <th>RPM</th>
+              <th>Carcaça</th>
+              <th>Grau Proteção</th>
+              <th>Preço</th>
+              <th>Criado em</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (motor of motores; track motor.id) {
+              <tr>
+                <td><strong>{{ motor.id }}</strong></td>
+                <td><strong>{{ motor.codigo }}</strong></td>
+                <td>{{ motor.modelo }}</td>
+                <td>{{ motor.fabricante_id || '-' }}</td>
+                <td>{{ motor.potencia_cv }} CV</td>
+                <td>{{ motor.tensao }}</td>
+                <td>{{ motor.frequencia_hz ? motor.frequencia_hz + ' Hz' : '-' }}</td>
+                <td>{{ motor.polos || '-' }}</td>
+                <td>{{ motor.rotacao_rpm }} RPM</td>
+                <td>{{ motor.carcaca || '-' }}</td>
+                <td>{{ motor.grau_protecao || '-' }}</td>
+                <td>{{ motor.preco ? 'R$ ' + motor.preco : '-' }}</td>
+                <td>{{ motor.criado_em }}</td>
+                <td class="actions-cell">
+                  <button class="btn-edit-sm">Editar</button>
+                  <button class="btn-delete-sm">Excluir</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <p>Nenhum motor cadastrado no banco de dados.</p>
+      </div>
+    }
+
+  }
+
+  <!-- MODAL DE CADASTRO -->
+  @if (exibirModal) {
+    <app-motor-form-modal 
+      (aoFechar)="fecharModal()" 
+      (aoSalvarSucesso)="onMotorSalvo()">
+    </app-motor-form-modal>
+  }
+
+</div>
