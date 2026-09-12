@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MotorInterface } from '../interfaces/motor-interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MotorService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/motores';
+  private readonly apiUrl = environment.apiUrl;
 
   getMotores(): Observable<MotorInterface[]> {
     return this.http.get<MotorInterface[]>(this.apiUrl);

@@ -14,7 +14,6 @@ export class MotorFormModal {
   private fb = inject(FormBuilder);
   private motorService = inject(MotorService);
 
-  // Emite evento para o componente pai quando o modal deve fechar ou quando o cadastro for concluído
   @Output() aoFechar = new EventEmitter<void>();
   @Output() aoSalvarSucesso = new EventEmitter<void>();
 
@@ -54,7 +53,7 @@ export class MotorFormModal {
     this.motorService.createMotor(novoMotor).subscribe({
       next: () => {
         this.salvando = false;
-        this.aoSalvarSucesso.emit(); // Notifica o pai para recarregar a lista
+        this.aoSalvarSucesso.emit();
       },
       error: (err) => {
         this.salvando = false;
