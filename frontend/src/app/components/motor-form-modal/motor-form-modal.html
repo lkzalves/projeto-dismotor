@@ -55,9 +55,21 @@
           <input id="preco" type="number" step="0.01" formControlName="preco" placeholder="Ex: 1500.00" />
         </div>
 
-     <div class="form-group">
-          <label for="fabricante_id">Fabricante</label>
-          <input id="fabricante_id" type="text" formControlName="fabricante_id" placeholder="Ex: 1500.00" />
+        <div class="form-group">
+          <label for="fabricante_id">Fabricante *</label>
+          <select 
+            id="fabricante_id" 
+            formControlName="fabricante_id" 
+            class="form-control">
+            
+            <option [ngValue]="null" disabled>
+              {{ carregandoFabricantes ? 'Carregando fabricantes...' : 'Selecione um fabricante' }}
+            </option>
+            
+            @for (fab of fabricantes; track fab.id) {
+              <option [ngValue]="fab.id">{{ fab.nome }}</option>
+            }
+          </select>
         </div>
 
         <div class="form-group">
@@ -73,8 +85,8 @@
         <div class="form-group">
           <label for="frequencia_hz">Frequência (Hz)</label>
           <select id="frequencia_hz" formControlName="frequencia_hz" class="form-control">
-            <option [ngValue]="2">50 HZ</option>
-            <option [ngValue]="4">60 HZ</option>
+            <option [ngValue]="50">50 HZ</option>
+            <option [ngValue]="60">60 HZ</option>
           </select>
         </div>
 

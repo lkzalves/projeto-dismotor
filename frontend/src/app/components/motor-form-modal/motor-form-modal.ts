@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MotorService } from '../../services/motor';
 import { MotorInterface } from '../../interfaces/motor-interface';
+import { FabricanteInterface } from '../../interfaces/fabricante';
 
 @Component({
   selector: 'app-motor-form-modal',
@@ -14,7 +15,6 @@ export class MotorFormModal implements OnInit {
   private fb = inject(FormBuilder);
   private motorService = inject(MotorService);
 
-  // Recebe o motor se for Edição. Se for criação, vem null ou undefined.
   @Input() motorParaEditar: MotorInterface | null = null;
 
   @Output() aoFechar = new EventEmitter<void>();
@@ -22,8 +22,9 @@ export class MotorFormModal implements OnInit {
 
   salvando: boolean = false;
   mensagemErro: string = '';
+  carregandoFabricantes: boolean = false;
+  fabricantes: FabricanteInterface[] = [];
 
-  // Construção do Formulário alinhado às regras do contrato do teste
   motorForm: FormGroup = this.fb.group({
     codigo: ['', [Validators.required, Validators.maxLength(30)]],
     modelo: ['', [Validators.required, Validators.maxLength(80)]],
@@ -39,7 +40,7 @@ export class MotorFormModal implements OnInit {
   });
 
   ngOnInit(): void {
-    // Se recebeu um motor para edição, preenche o formulário automaticamente
+    this.carregarFabricantes();
     if (this.motorParaEditar) {
       this.motorForm.patchValue(this.motorParaEditar);
     }
@@ -51,6 +52,13 @@ export class MotorFormModal implements OnInit {
 
   salvarMotor(): void {
     if (this.motorForm.invalid) {
+      console.log('Formulário inválido! Campos com erro:');
+      Object.keys(this.motorForm.controls).forEach((campo) => {
+        const controle = this.motorForm.get(campo);
+        if (controle?.invalid) {
+          console.log(`- Campo "${campo}":`, controle.errors);
+        }
+      });
       this.motorForm.markAllAsTouched();
       return;
     }
@@ -60,7 +68,6 @@ export class MotorFormModal implements OnInit {
 
     const dadosMotor: MotorInterface = this.motorForm.value;
 
-    // Se temos motorParaEditar com ID -> Executa PUT. Caso contrário -> Executa POST.
     if (this.motorParaEditar && this.motorParaEditar.id) {
       this.motorService.updateMotor(this.motorParaEditar.id, dadosMotor).subscribe({
         next: () => {
@@ -83,11 +90,24 @@ export class MotorFormModal implements OnInit {
   private tratarErro(err: any): void {
     this.salvando = false;
     if (err.error && err.error.error) {
-      // Se a API retornar a estrutura { error: "...", details: [...] }
       const detalhes = err.error.details ? `: ${err.error.details.join(', ')}` : '';
       this.mensagemErro = `${err.error.error}${detalhes}`;
     } else {
       this.mensagemErro = 'Ocorreu um erro ao salvar o motor. Tente novamente.';
     }
+  }
+
+  carregarFabricantes(): void {
+    this.carregandoFabricantes = true;
+    this.motorService.getFabricantes().subscribe({
+      next: (dados) => {
+        this.fabricantes = dados;
+        this.carregandoFabricantes = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar fabricantes:', err);
+        this.carregandoFabricantes = false;
+      },
+    });
   }
 }

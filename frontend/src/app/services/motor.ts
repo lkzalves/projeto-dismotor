@@ -11,6 +11,7 @@ import { environment } from '../../environments/environment';
 export class MotorService {
   private http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/motores`;
+  private readonly fabricantesUrl = `${environment.apiUrl}/fabricantes`;
 
   getMotores(search?: string): Observable<MotorInterface[]> {
     let params = new HttpParams();
