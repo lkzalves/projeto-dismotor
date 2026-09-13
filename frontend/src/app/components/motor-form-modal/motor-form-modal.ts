@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MotorService } from '../../services/motor';
 import { MotorInterface } from '../../interfaces/motor-interface';
@@ -20,10 +20,10 @@ export class MotorFormModal implements OnInit {
   @Output() aoFechar = new EventEmitter<void>();
   @Output() aoSalvarSucesso = new EventEmitter<void>();
 
-  salvando: boolean = false;
-  mensagemErro: string = '';
-  carregandoFabricantes: boolean = false;
-  fabricantes: FabricanteInterface[] = [];
+  salvando = signal<boolean>(false);
+  mensagemErro = signal<string>('');
+  carregandoFabricantes = signal<boolean>(false);
+  fabricantes = signal<FabricanteInterface[]>([]);
 
   motorForm: FormGroup = this.fb.group({
     codigo: ['', [Validators.required, Validators.maxLength(30)]],
@@ -51,13 +51,11 @@ export class MotorFormModal implements OnInit {
   }
 
   salvarMotor(): void {
-    // Se o formulário estiver inválido, descobre e lista os campos exatos com erro no alert
     if (this.motorForm.invalid) {
       this.motorForm.markAllAsTouched();
 
       const errosDetalhados: string[] = [];
 
-      // Mapeamento de nomes técnicos para rótulos legíveis
       const nomesCampos: { [key: string]: string } = {
         codigo: 'Código',
         modelo: 'Modelo',
@@ -105,22 +103,21 @@ export class MotorFormModal implements OnInit {
         }
       });
 
-      // Dispara o popup alert com todos os detalhes listados
       alert(
         `Formulário Inválido!\n\nVerifique os seguintes campos:\n\n${errosDetalhados.join('\n')}`,
       );
       return;
     }
 
-    this.salvando = true;
-    this.mensagemErro = '';
+    this.salvando.set(true);
+    this.mensagemErro.set('');
 
     const dadosMotor: MotorInterface = this.motorForm.value;
 
     if (this.motorParaEditar && this.motorParaEditar.id) {
       this.motorService.updateMotor(this.motorParaEditar.id, dadosMotor).subscribe({
         next: () => {
-          this.salvando = false;
+          this.salvando.set(false);
           this.aoSalvarSucesso.emit();
           alert('Motor atualizado com sucesso!');
         },
@@ -129,7 +126,7 @@ export class MotorFormModal implements OnInit {
     } else {
       this.motorService.createMotor(dadosMotor).subscribe({
         next: () => {
-          this.salvando = false;
+          this.salvando.set(false);
           this.aoSalvarSucesso.emit();
           alert('Motor criado com sucesso!');
         },
@@ -139,13 +136,15 @@ export class MotorFormModal implements OnInit {
   }
 
   private tratarErro(err: any): void {
-    this.salvando = false;
+    this.salvando.set(false);
     if (err.error && err.error.error) {
-      const detalhes = err.error.details ? `: ${err.error.details.join(', ')}` : '';
-      this.mensagemErro = `${err.error.error}${detalhes}`;
+      const detalhes = err.error.details ? `\n\nDetalhes: ${err.error.details.join(', ')}` : '';
+      this.mensagemErro.set(`${err.error.error}${detalhes}`);
     } else {
-      this.mensagemErro = 'Ocorreu um erro ao salvar o motor. Tente novamente.';
+      this.mensagemErro.set('Ocorreu um erro ao salvar o motor. Tente novamente.');
     }
+
+    alert(`Erro ao salvar:\n${this.mensagemErro()}`);
   }
 
   obterMensagemErro(nomeCampo: string): string {
@@ -154,15 +153,13 @@ export class MotorFormModal implements OnInit {
 
     const erros = controle.errors;
 
-    // Trata o erro de campo obrigatório
     if (erros['required']) {
       return 'Este campo é obrigatório.';
     }
 
-    // Trata o erro de limite de caracteres excedido (maxLength)
     if (erros['maxlength']) {
-      const limite = erros['maxlength'].requiredLength; // Retorna 30
-      const digitados = erros['maxlength'].actualLength; // Quantos o usuário digitou
+      const limite = erros['maxlength'].requiredLength;
+      const digitados = erros['maxlength'].actualLength;
       return `O limite desse campo é de ${limite} caracteres (você digitou ${digitados}).`;
     }
 
@@ -175,15 +172,15 @@ export class MotorFormModal implements OnInit {
   }
 
   carregarFabricantes(): void {
-    this.carregandoFabricantes = true;
+    this.carregandoFabricantes.set(true);
     this.motorService.getFabricantes().subscribe({
       next: (dados) => {
-        this.fabricantes = dados;
-        this.carregandoFabricantes = false;
+        this.fabricantes.set(dados);
+        this.carregandoFabricantes.set(false);
       },
       error: (err) => {
         console.error('Erro ao carregar fabricantes:', err);
-        this.carregandoFabricantes = false;
+        this.carregandoFabricantes.set(false);
       },
     });
   }

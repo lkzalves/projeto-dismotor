@@ -6,9 +6,9 @@
       <button type="button" class="btn-close" (click)="fecharModal()">×</button>
     </div>
 
-    @if (mensagemErro) {
+    @if (mensagemErro()) {
       <div class="alert-error">
-        {{ mensagemErro }}
+        {{ mensagemErro() }}
       </div>
     }
 
@@ -66,10 +66,10 @@
             class="form-control">
             
             <option [ngValue]="null" disabled>
-              {{ carregandoFabricantes ? 'Carregando fabricantes...' : 'Selecione um fabricante' }}
+              {{ carregandoFabricantes() ? 'Carregando fabricantes...' : 'Selecione um fabricante' }}
             </option>
             
-            @for (fab of fabricantes; track fab.id) {
+            @for (fab of fabricantes(); track fab.id) {
               <option [ngValue]="fab.id">{{ fab.nome }}</option>
             }
           </select>
@@ -106,8 +106,8 @@
 
       <div class="modal-actions">
         <button type="button" class="btn-cancel" (click)="fecharModal()">Cancelar</button>
-        <button type="submit" class="btn-submit" [disabled]="salvando">
-          {{ salvando ? 'Salvando...' : 'Confirmar' }}
+        <button type="submit" class="btn-submit" [disabled]="salvando()">
+          {{ salvando() ? 'Salvando...' : 'Confirmar' }}
         </button>
       </div>
 
