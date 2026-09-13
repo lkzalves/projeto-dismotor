@@ -51,16 +51,64 @@ export class MotorFormModal implements OnInit {
   }
 
   salvarMotor(): void {
+    // Se o formulário estiver inválido, descobre e lista os campos exatos com erro no alert
     if (this.motorForm.invalid) {
-      console.log('Formulário inválido! Campos com erro:');
-      Object.keys(this.motorForm.controls).forEach((campo) => {
-        const controle = this.motorForm.get(campo);
-        if (controle?.invalid) {
-          console.log(`- Campo "${campo}":`, controle.errors);
+      this.motorForm.markAllAsTouched();
+
+      const errosDetalhados: string[] = [];
+
+      // Mapeamento de nomes técnicos para rótulos legíveis
+      const nomesCampos: { [key: string]: string } = {
+        codigo: 'Código',
+        modelo: 'Modelo',
+        fabricante_id: 'Fabricante',
+        potencia_cv: 'Potência (CV)',
+        tensao: 'Tensão',
+        frequencia_hz: 'Frequência (Hz)',
+        polos: 'Polos',
+        rotacao_rpm: 'Rotação (RPM)',
+        carcaca: 'Carcaça',
+        grau_protecao: 'Grau de Proteção',
+        preco: 'Preço',
+      };
+
+      Object.keys(this.motorForm.controls).forEach((nomeCampo) => {
+        const controle = this.motorForm.get(nomeCampo);
+
+        if (controle && controle.invalid) {
+          const nomeExibicao = nomesCampos[nomeCampo] || nomeCampo;
+          const detalhes: string[] = [];
+
+          if (controle.errors?.['required']) {
+            detalhes.push('preenchimento obrigatório');
+          }
+          if (controle.errors?.['maxlength']) {
+            const max = controle.errors['maxlength'].requiredLength;
+            const digitados = controle.errors['maxlength'].actualLength;
+            detalhes.push(`ultrapassou ${max} caracteres (digitados: ${digitados})`);
+          }
+          if (controle.errors?.['min']) {
+            const min = controle.errors['min'].min;
+            detalhes.push(`valor mínimo aceito é ${min}`);
+          }
+          if (controle.errors?.['pattern']) {
+            if (nomeCampo === 'frequencia_hz') {
+              detalhes.push('deve ser 50 ou 60 Hz');
+            } else if (nomeCampo === 'polos') {
+              detalhes.push('deve ser 2, 4, 6 ou 8');
+            } else {
+              detalhes.push('formato inválido');
+            }
+          }
+
+          errosDetalhados.push(`• ${nomeExibicao}: ${detalhes.join(', ')}`);
         }
       });
-      this.motorForm.markAllAsTouched();
-      alert('Formulário inválido! Verifique os campos marcados.');
+
+      // Dispara o popup alert com todos os detalhes listados
+      alert(
+        `Formulário Inválido!\n\nVerifique os seguintes campos:\n\n${errosDetalhados.join('\n')}`,
+      );
       return;
     }
 
@@ -98,6 +146,32 @@ export class MotorFormModal implements OnInit {
     } else {
       this.mensagemErro = 'Ocorreu um erro ao salvar o motor. Tente novamente.';
     }
+  }
+
+  obterMensagemErro(nomeCampo: string): string {
+    const controle = this.motorForm.get(nomeCampo);
+    if (!controle || !controle.errors) return '';
+
+    const erros = controle.errors;
+
+    // Trata o erro de campo obrigatório
+    if (erros['required']) {
+      return 'Este campo é obrigatório.';
+    }
+
+    // Trata o erro de limite de caracteres excedido (maxLength)
+    if (erros['maxlength']) {
+      const limite = erros['maxlength'].requiredLength; // Retorna 30
+      const digitados = erros['maxlength'].actualLength; // Quantos o usuário digitou
+      return `O limite desse campo é de ${limite} caracteres (você digitou ${digitados}).`;
+    }
+
+    return 'Campo inválido.';
+  }
+
+  campoInvalido(nomeCampo: string): boolean {
+    const controle = this.motorForm.get(nomeCampo);
+    return !!(controle && controle.invalid && (controle.touched || controle.dirty));
   }
 
   carregarFabricantes(): void {

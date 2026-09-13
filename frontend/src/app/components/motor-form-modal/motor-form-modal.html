@@ -17,10 +17,13 @@
       <div class="form-row">
         <div class="form-group">
           <label for="codigo">Código *</label>
-          <input id="codigo" type="text" formControlName="codigo" placeholder="Ex: MOT-100" />
+          <input id="codigo" type="number" formControlName="codigo" placeholder="Ex: MOT-100" />
           @if (motorForm.get('codigo')?.touched && motorForm.get('codigo')?.invalid) {
             <small class="error-msg">Código é obrigatório.</small>
           }
+          @if (campoInvalido('codigo')) {
+    <span class="error-message">{{ obterMensagemErro('codigo') }}</span>
+  }
         </div>
 
         <div class="form-group">

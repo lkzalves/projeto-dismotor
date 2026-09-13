@@ -2,7 +2,7 @@ export interface MotorInterface {
   id?: number;
   codigo: string;
   modelo: string;
-  fabricante_id?: number;
+  fabricante_nome?: string;
   potencia_cv: number;
   tensao: string | number;
   frequencia_hz?: number;

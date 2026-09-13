@@ -52,7 +52,7 @@
                 <td><strong>{{ motor.id }}</strong></td>
                 <td><strong>{{ motor.codigo }}</strong></td>
                 <td>{{ motor.modelo }}</td>
-                <td>{{ motor.fabricante_id || '-' }}</td>
+                <td>{{ motor.fabricante_nome || '-' }}</td>
                 <td>{{ motor.potencia_cv }} CV</td>
                 <td>{{ motor.tensao }}</td>
                 <td>{{ motor.frequencia_hz ? motor.frequencia_hz + ' Hz' : '-' }}</td>
@@ -61,7 +61,7 @@
                 <td>{{ motor.carcaca || '-' }}</td>
                 <td>{{ motor.grau_protecao || '-' }}</td>
                 <td>{{ motor.preco ? 'R$ ' + motor.preco : '-' }}</td>
-                <td>{{ motor.criado_em }}</td>
+                <td>{{ motor.criado_em | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="actions-cell">
                   <button class="btn-edit-sm" (click)="abrirModalParaEditar(motor)"> Editar </button>
                   <button type="button" class="btn-delete-sm" (click)="excluirMotor(motor)"> Excluir </button>

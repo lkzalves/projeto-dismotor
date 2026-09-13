@@ -124,13 +124,15 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
   background: var(--color-surface);
-  font-size: 13px;
+  font-size: 12px;
+  table-layout: auto;
 }
 
 .data-table thead {
@@ -139,21 +141,23 @@
 }
 
 .data-table th {
-  padding: 10px 14px;
+  padding: 8px 10px;
   text-align: left;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .5px;
+  letter-spacing: .4px;
   color: var(--color-muted);
   white-space: nowrap;
 }
 
 .data-table td {
-  padding: 10px 14px;
+  padding: 7px 10px;
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 160px;
 }
 
 .data-table tbody tr:last-child td {
@@ -167,16 +171,17 @@
 /* ─── Célula de ações ───────────────────────────────────────── */
 .actions-cell {
   display: flex;
-  gap: 6px;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .btn-edit-sm,
 .btn-delete-sm {
-  height: 28px;
-  padding: 0 10px;
+  height: 24px;
+  padding: 0 8px;
   border: none;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   transition: background var(--transition), transform var(--transition);

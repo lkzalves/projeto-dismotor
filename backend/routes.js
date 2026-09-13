@@ -27,7 +27,7 @@ export default function iniciaRotas(
       try {
         const { search } = req.query;
         let query =
-          "SELECT * FROM motores";
+          "SELECT motores.*, fabricantes.nome AS fabricante_nome FROM motores LEFT JOIN fabricantes ON motores.fabricante_id = fabricantes.id";
         let params = [];
 
         if (
@@ -336,12 +336,10 @@ export default function iniciaRotas(
           "Erro ao buscar fabricantes:",
           error,
         );
-        res
-          .status(500)
-          .json({
-            error:
-              "Erro interno ao buscar fabricantes",
-          });
+        res.status(500).json({
+          error:
+            "Erro interno ao buscar fabricantes",
+        });
       }
     },
   );
