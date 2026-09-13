@@ -8,19 +8,15 @@ export default function iniciaRotas(
     async (req, res) => {
       try {
         await pool.query("SELECT 1");
-        res
-          .status(200)
-          .json({
-            status: "ok",
-            database: "ok",
-          });
+        res.status(200).json({
+          status: "ok",
+          database: "ok",
+        });
       } catch (error) {
-        res
-          .status(500)
-          .json({
-            status: "error",
-            database: "down",
-          });
+        res.status(500).json({
+          status: "error",
+          database: "down",
+        });
       }
     },
   );
@@ -56,12 +52,10 @@ export default function iniciaRotas(
           "Erro ao buscar motores:",
           error,
         );
-        res
-          .status(500)
-          .json({
-            error:
-              "Erro interno ao consultar motores",
-          });
+        res.status(500).json({
+          error:
+            "Erro interno ao consultar motores",
+        });
       }
     },
   );
@@ -77,22 +71,18 @@ export default function iniciaRotas(
         );
 
         if (rows.length === 0) {
-          return res
-            .status(404)
-            .json({
-              error:
-                "Motor não encontrado",
-            });
+          return res.status(404).json({
+            error:
+              "Motor não encontrado",
+          });
         }
 
         res.status(200).json(rows[0]);
       } catch (error) {
-        res
-          .status(500)
-          .json({
-            error:
-              "Erro interno ao buscar motor",
-          });
+        res.status(500).json({
+          error:
+            "Erro interno ao buscar motor",
+        });
       }
     },
   );
@@ -150,12 +140,10 @@ export default function iniciaRotas(
           );
 
         if (details.length > 0) {
-          return res
-            .status(400)
-            .json({
-              error: "Dados inválidos",
-              details,
-            });
+          return res.status(400).json({
+            error: "Dados inválidos",
+            details,
+          });
         }
 
         const [resultado] =
@@ -196,12 +184,10 @@ export default function iniciaRotas(
             "Erro ao cadastrar motor:",
             error,
           );
-          res
-            .status(500)
-            .json({
-              error:
-                "Erro interno ao salvar motor",
-            });
+          res.status(500).json({
+            error:
+              "Erro interno ao salvar motor",
+          });
         }
       }
     },
@@ -266,12 +252,10 @@ export default function iniciaRotas(
         if (
           resultado.affectedRows === 0
         ) {
-          return res
-            .status(404)
-            .json({
-              error:
-                "Motor não encontrado.",
-            });
+          return res.status(404).json({
+            error:
+              "Motor não encontrado.",
+          });
         }
 
         res.status(200).json({
@@ -292,12 +276,10 @@ export default function iniciaRotas(
             "Erro ao atualizar motor:",
             error,
           );
-          res
-            .status(500)
-            .json({
-              error:
-                "Erro interno ao atualizar motor.",
-            });
+          res.status(500).json({
+            error:
+              "Erro interno ao atualizar motor.",
+          });
         }
       }
     },
@@ -318,30 +300,47 @@ export default function iniciaRotas(
         if (
           resultado.affectedRows === 0
         ) {
-          return res
-            .status(404)
-            .json({
-              error:
-                "Motor não encontrado.",
-            });
+          return res.status(404).json({
+            error:
+              "Motor não encontrado.",
+          });
         }
 
-        res
-          .status(200)
-          .json({
-            message:
-              "Motor excluído com sucesso.",
-          });
+        res.status(200).json({
+          message:
+            "Motor excluído com sucesso.",
+        });
       } catch (error) {
         console.error(
           "Erro ao excluir motor:",
+          error,
+        );
+        res.status(500).json({
+          error:
+            "Erro interno ao excluir motor.",
+        });
+      }
+    },
+  );
+
+  app.get(
+    "/api/fabricantes",
+    async (req, res) => {
+      try {
+        const [rows] = await pool.query(
+          "SELECT * FROM fabricantes ORDER BY nome ASC",
+        );
+        res.status(200).json(rows);
+      } catch (error) {
+        console.error(
+          "Erro ao buscar fabricantes:",
           error,
         );
         res
           .status(500)
           .json({
             error:
-              "Erro interno ao excluir motor.",
+              "Erro interno ao buscar fabricantes",
           });
       }
     },

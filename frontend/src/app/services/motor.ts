@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MotorInterface } from '../interfaces/motor-interface';
+import { FabricanteInterface } from '../interfaces/fabricante';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -29,5 +30,9 @@ export class MotorService {
 
   deleteMotor(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getFabricantes(): Observable<FabricanteInterface[]> {
+    return this.http.get<FabricanteInterface[]>(this.fabricantesUrl);
   }
 }
