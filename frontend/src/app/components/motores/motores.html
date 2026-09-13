@@ -21,11 +21,11 @@
     </div>
   </div>
 
-  @if (carregando) {
+  @if (carregando()) {
     <div class="loading">Carregando motores do banco de dados...</div>
   } @else {
 
-    @if (motores.length > 0) {
+    @if (motores().length > 0) {
       <div class="table-responsive">
         <table class="data-table">
           <thead>
@@ -47,7 +47,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (motor of motores; track motor.id) {
+            @for (motor of motores(); track motor.id) {
               <tr>
                 <td><strong>{{ motor.id }}</strong></td>
                 <td><strong>{{ motor.codigo }}</strong></td>
@@ -79,9 +79,9 @@
 
   }
 
-  @if (exibirModal) {
+  @if (exibirModal()) {
     <app-motor-form-modal 
-      [motorParaEditar]="motorSelecionado"
+      [motorParaEditar]="motorSelecionado()"
       (aoFechar)="fecharModal()" 
       (aoSalvarSucesso)="onMotorSalvo()">
     </app-motor-form-modal>

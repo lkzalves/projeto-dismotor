@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MotorService } from '../../services/motor';
@@ -15,27 +15,33 @@ import { MotorFormModal } from '../motor-form-modal/motor-form-modal';
 export class MotoresComponent implements OnInit {
   private motorService = inject(MotorService);
 
-  motores: MotorInterface[] = [];
-  carregando: boolean = true;
-  exibirModal: boolean = false;
+  motores = signal<MotorInterface[]>([]);
+  carregando = signal<boolean>(true);
+  exibirModal = signal<boolean>(false);
 
   termoBusca: string = '';
-  motorSelecionado: MotorInterface | null = null;
+  motorSelecionado = signal<MotorInterface | null>(null);
 
   ngOnInit(): void {
     this.carregarMotores();
   }
 
   carregarMotores(): void {
-    this.carregando = true;
+    this.carregando.set(true);
     this.motorService.getMotores(this.termoBusca).subscribe({
-      next: (dados) => {
-        this.motores = dados;
-        this.carregando = false;
+      next: (resposta: any) => {
+        if (Array.isArray(resposta)) {
+          this.motores.set(resposta);
+        } else if (resposta && Array.isArray(resposta.data)) {
+          this.motores.set(resposta.data);
+        } else {
+          this.motores.set([]);
+        }
+        this.carregando.set(false);
       },
       error: (err) => {
         console.error('Erro ao carregar motores', err);
-        this.carregando = false;
+        this.carregando.set(false);
       },
     });
   }
@@ -45,18 +51,18 @@ export class MotoresComponent implements OnInit {
   }
 
   abrirModalParaCriar(): void {
-    this.motorSelecionado = null;
-    this.exibirModal = true;
+    this.motorSelecionado.set(null);
+    this.exibirModal.set(true);
   }
 
   abrirModalParaEditar(motor: MotorInterface): void {
-    this.motorSelecionado = motor;
-    this.exibirModal = true;
+    this.motorSelecionado.set(motor);
+    this.exibirModal.set(true);
   }
 
   fecharModal(): void {
-    this.exibirModal = false;
-    this.motorSelecionado = null;
+    this.exibirModal.set(false);
+    this.motorSelecionado.set(null);
   }
 
   onMotorSalvo(): void {
@@ -82,3 +88,4 @@ export class MotoresComponent implements OnInit {
     }
   }
 }
+
