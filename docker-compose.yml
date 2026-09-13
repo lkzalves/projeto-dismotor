@@ -13,10 +13,39 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      # Esse volume executa o init.sql automaticamente na primeira subida
       - ./backend/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  backend:
+    build: ./backend
+    container_name: motores_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: motores_db
+      DB_PORT: 3306
+      PORT: 3000
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: motores_frontend
+    restart: always
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
