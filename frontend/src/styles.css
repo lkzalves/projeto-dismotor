@@ -1,1 +1,35 @@
-/* You can add global styles to this file, and also import other style files */
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg:        #f4f6f9;
+  --color-surface:   #ffffff;
+  --color-border:    #e0e4eb;
+  --color-text:      #1a1d23;
+  --color-muted:     #6b7280;
+  --color-primary:   #2563eb;
+  --color-primary-h: #1d4ed8;
+  --color-danger:    #dc2626;
+  --color-danger-h:  #b91c1c;
+  --color-success:   #16a34a;
+  --color-warning:   #ca8a04;
+  --radius:          6px;
+  --shadow-sm:       0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:       0 4px 16px rgba(0,0,0,.12);
+  --transition:      0.15s ease;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
