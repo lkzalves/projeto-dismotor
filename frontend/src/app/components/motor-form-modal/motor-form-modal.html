@@ -72,12 +72,20 @@
 
         <div class="form-group">
           <label for="frequencia_hz">Frequência (Hz)</label>
-          <input id="frequencia_hz" type="number" formControlName="frequencia_hz" placeholder="Ex: 1500.00" />
+          <select id="frequencia_hz" formControlName="frequencia_hz" class="form-control">
+            <option [ngValue]="2">50 HZ</option>
+            <option [ngValue]="4">60 HZ</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label for="polos">Polos</label>
-          <input id="polos" type="number" formControlName="polos" placeholder="Ex: 1500.00" />
+          <label for="polos">Polos *</label>
+          <select id="polos" formControlName="polos" class="form-control">
+            <option [ngValue]="2">2 Polos</option>
+            <option [ngValue]="4">4 Polos</option>
+            <option [ngValue]="6">6 Polos</option>
+            <option [ngValue]="8">8 Polos</option>
+          </select>
         </div>
       </div>
 

@@ -63,8 +63,8 @@
                 <td>{{ motor.preco ? 'R$ ' + motor.preco : '-' }}</td>
                 <td>{{ motor.criado_em }}</td>
                 <td class="actions-cell">
-                  <button class="btn-edit-sm" (click)="abrirModalParaEditar(motor)">Editar</button>
-                  <button class="btn-delete-sm" (click)="excluirMotor(motor.id!)">Excluir</button>
+                  <button class="btn-edit-sm" (click)="abrirModalParaEditar(motor)"> Editar </button>
+                  <button type="button" class="btn-delete-sm" (click)="excluirMotor(motor)"> Excluir </button>
                 </td>
               </tr>
             }

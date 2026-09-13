@@ -61,14 +61,23 @@ export class MotoresComponent implements OnInit {
 
   onMotorSalvo(): void {
     this.fecharModal();
-    this.carregarMotores(); // Recarrega a tabela
+    this.carregarMotores();
   }
 
-  excluirMotor(id: number): void {
-    if (confirm('Tem certeza que deseja excluir este motor?')) {
-      this.motorService.deleteMotor(id).subscribe({
-        next: () => this.carregarMotores(),
-        error: (err) => alert('Erro ao excluir motor.'),
+  excluirMotor(motor: MotorInterface): void {
+    const confirmacao = confirm(
+      `Certeza que deseja excluir o motor "${motor.codigo} - ${motor.modelo}"?`,
+    );
+
+    if (confirmacao && motor.id) {
+      this.motorService.deleteMotor(motor.id).subscribe({
+        next: () => {
+          this.carregarMotores();
+        },
+        error: (err) => {
+          console.error('Erro ao excluir motor:', err);
+          alert(err.error?.error || 'Não foi possível excluir o motor.');
+        },
       });
     }
   }
