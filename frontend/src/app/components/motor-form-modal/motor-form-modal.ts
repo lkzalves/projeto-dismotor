@@ -30,9 +30,9 @@ export class MotorFormModal implements OnInit {
     modelo: ['', [Validators.required, Validators.maxLength(80)]],
     fabricante_id: [null, [Validators.required]],
     potencia_cv: [null, [Validators.required, Validators.min(0.01)]],
-    tensao: ['', [Validators.required]],
-    frequencia_hz: [60, [Validators.required, Validators.pattern(/^(50|60)$/)]],
-    polos: [4, [Validators.required, Validators.pattern(/^(2|4|6|8)$/)]],
+    tensao: ['', [Validators.required, Validators.maxLength(30)]],
+    frequencia_hz: ['', [Validators.required, Validators.pattern(/^(50|60)$/)]],
+    polos: ['', [Validators.required, Validators.pattern(/^(2|4|6|8)$/)]],
     rotacao_rpm: [null, [Validators.required, Validators.min(1)]],
     carcaca: [''],
     grau_protecao: [''],
@@ -60,6 +60,7 @@ export class MotorFormModal implements OnInit {
         }
       });
       this.motorForm.markAllAsTouched();
+      alert('Formulário inválido! Verifique os campos marcados.');
       return;
     }
 
@@ -73,6 +74,7 @@ export class MotorFormModal implements OnInit {
         next: () => {
           this.salvando = false;
           this.aoSalvarSucesso.emit();
+          alert('Motor atualizado com sucesso!');
         },
         error: (err) => this.tratarErro(err),
       });
@@ -81,6 +83,7 @@ export class MotorFormModal implements OnInit {
         next: () => {
           this.salvando = false;
           this.aoSalvarSucesso.emit();
+          alert('Motor criado com sucesso!');
         },
         error: (err) => this.tratarErro(err),
       });
