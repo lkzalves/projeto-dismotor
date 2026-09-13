@@ -19,7 +19,7 @@ Apenas o Docker e o Docker Compose instalados.
 Clone o repositório e rode o comando abaixo na raiz do projeto:
 
 bash
-git clone <https://github.com/lkzalves/projeto-dismotor>
-cd projeto-dismotor
-docker compose up -d --build
+- git clone <https://github.com/lkzalves/projeto-dismotor>
+- cd projeto-dismotor
+- docker compose up -d --build
 
